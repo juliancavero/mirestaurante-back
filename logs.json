@@ -1,0 +1,6 @@
+{"level":30,"time":1648975738201,"pid":1987,"hostname":"MacBook-Pro.home","msg":"Starting WebServer01"}
+{"level":30,"time":1648975738207,"pid":1987,"hostname":"MacBook-Pro.home","msg":"Server listening at http://0.0.0.0:8080"}
+{"level":30,"time":1648975744100,"pid":1987,"hostname":"MacBook-Pro.home","reqId":"req-1","req":{"method":"GET","url":"/version","hostname":"localhost:8080","remoteAddress":"127.0.0.1","remotePort":49425},"msg":"incoming request"}
+{"level":30,"time":1648975744108,"pid":1987,"hostname":"MacBook-Pro.home","reqId":"req-1","res":{"statusCode":200},"responseTime":6.839083000086248,"msg":"request completed"}
+[1648976152329] [32mINFO[39m (2127 on MacBook-Pro.home): [36mStarting WebServer01[39m
+[1648976152337] [32mINFO[39m (2127 on MacBook-Pro.home): [36mServer listening at http://0.0.0.0:8080[39m

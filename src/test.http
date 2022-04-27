@@ -1,0 +1,45 @@
+### GET ALL RESERVATIONS
+GET http://0.0.0.0:3099/reservations HTTP/1.1
+
+
+### POST NUEVA RESERVA
+
+POST http://0.0.0.0:3099/newReservation HTTP/1.1
+content-type: application/json
+
+{
+    "id": 2,
+    "status": "Available",
+    "size": 4
+}
+
+### MODIFICAR RESERVA EXISTENTE
+
+PUT http://0.0.0.0:3099/modifyReservation HTTP/1.1
+content-type: application/json
+
+{
+    "id": 2,
+    "status": "Taken",
+    "size": 9
+}
+
+### MODIFICAR RESERVA NO EXISTENTE
+
+PUT http://0.0.0.0:3099/modifyReservation HTTP/1.1
+content-type: application/json
+
+{
+    "id": 99,
+    "status": "Taken",
+    "size": 6
+}
+
+### DELETE ALL
+GET http://0.0.0.0:3099/deleteAllData HTTP/1.1
+
+### POPULATE RESERVATIONS TABLE
+
+GET http://0.0.0.0:3099/populateReservations HTTP/1.1
+content-type: application/json
+
