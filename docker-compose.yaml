@@ -6,11 +6,11 @@ services:
           image: mongo:latest
           container_name: "mongodb"
           environment:
-                         - DATABASE_NAME=teamcamp
+               - DATABASE_NAME=teamcamp
           volumes:
-                         - mongodata:/data/db
+               - mongodata:/data/db
           ports:
-                         - "27017:27017"
+               - "27017:27017"
           command: mongod
      mirestaurante:
           networks:
