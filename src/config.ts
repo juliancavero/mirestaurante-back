@@ -119,7 +119,7 @@ export function buildConfig(): Config {
             host: {
                 doc: 'The host ip address to bind the MongoDB server.',
                 format: String,
-                default: '0.0.0.0',
+                default: 'localhost',
                 env: 'MONGO_HOST'
             },
             port: {
