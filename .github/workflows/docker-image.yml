@@ -25,16 +25,11 @@ jobs:
             node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run lint
-      - run: npm run test-ci
-      - run: npm run publish-code-coverage
-        env:
-            CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
-
   build:
     needs: test
     env:
       CI: true
-      IMAGE_NAME: juanjofranco/ttn-hooks
+      IMAGE_NAME: juliancavero/mirestaurante-back
 
     runs-on: ubuntu-latest
 
@@ -81,7 +76,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT }}
           source: "docker-compose.yml"
-          target: "ttn-hooks/compose"
+          target: "mirestaurante/backend"
           rm: true
 
       - name: Deploy with docker-compose
@@ -91,4 +86,4 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT }}
-          script: cd ttn-hooks/compose && docker-compose down && docker-compose pull && docker-compose up -d
+          script: cd mirestaurante/backend && docker-compose down && docker-compose pull && docker-compose up -d
