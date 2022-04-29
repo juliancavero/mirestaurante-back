@@ -8,6 +8,8 @@ COPY package*.json ./
 
 RUN npm ci && ls
 
+RUN npm run build
+
 COPY ./dist ./dist
 RUN ls
 
