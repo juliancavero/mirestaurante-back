@@ -16,7 +16,7 @@ COPY package*.json ./
 
 RUN npm ci --production
 
-COPY --from=builder /usr/app/dist ./dist
+COPY --from=builder /usr/app/dist /user/app/dist
 
 ENV HTTP_PORT 4040
 EXPOSE ${HTTP_PORT}
