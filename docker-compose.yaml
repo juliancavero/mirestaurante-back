@@ -21,6 +21,8 @@ services:
                - "4040:3099"
           depends_on:
                - mongodb
+          volumes:
+               - ${PWD}/mirestaurante/statics:/public/images
           restart: always
 volumes:
      mongodata:
