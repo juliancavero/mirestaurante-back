@@ -4,7 +4,7 @@ import { NOSQL_DB } from './databases/mongo-db';
 import fastifyCors from 'fastify-cors';
 import { ObjectId } from 'mongodb';
 import multer from 'fastify-multer';
-// import fastifyStatic  from 'fastify-static';
+import fastifyStatic  from 'fastify-static';
 import path from 'path';
 
 // import { buildTableRutesPlugin } from './routes/tableRoutes';
@@ -79,7 +79,7 @@ export function buildServer({
 
     const storage = multer.diskStorage({
         destination: function (req, file, callback) {
-            callback(null, path.join(__dirname, '../public/images/'))
+            callback(null, path.join(__dirname, '/public/images/'))
         },
         filename: function (req, file, callback){
             callback(null, file.originalname)
@@ -100,7 +100,10 @@ export function buildServer({
     
     server.register(multer.contentParser);
 
-    
+    server.register(fastifyStatic, {
+        root: path.join(__dirname, 'public/images'),
+        prefix: '/public/images/',
+    })
 
     server.post('/cartaItemPhoto', { preHandler: upload.single('cartaItemPhoto')}, function (req, res){
         console.log(req.body);
