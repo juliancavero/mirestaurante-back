@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 15.x, 16.x, 17.x]
+        node-version: [15.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -74,7 +74,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT }}
-          source: "docker-compose.yml"
+          source: "docker-compose.yaml"
           target: "mirestaurante/backend"
           rm: true
 
