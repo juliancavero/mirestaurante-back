@@ -9,7 +9,6 @@ COPY package*.json ./
 RUN npm ci && ls
 
 COPY ./dist ./dist
-
 RUN ls
 
 EXPOSE 3099

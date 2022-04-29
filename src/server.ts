@@ -30,11 +30,11 @@ type Table = {
 export type CartaType = Categoria[];
 
 export type Categoria = {
-    nombre: string;
+    name: string;
     items: Item[];
 }
 export type ItemInsert = {
-    nombre: string;
+    name: string;
     items: ItemSendType;
 }
 
@@ -105,7 +105,7 @@ export function buildServer({
         prefix: '/public/images/',
     })
 
-    server.post('/cartaItemPhoto', { preHandler: upload.single('cartaItem')}, function (req, res){
+    server.post('/cartaItemPhoto', { preHandler: upload.single('cartaItemPhoto')}, function (req, res){
         console.log(req.body);
         res
             .code(200)
@@ -166,7 +166,7 @@ export function buildServer({
             ];
         await database.collection('reservations').insertMany(table);
         
-        const cartaCategories = [{ nombre: "Entrantes", items: [] }, { nombre: "Carnes", items: [] }, { nombre: "Pescados", items: [] }];
+        const cartaCategories = [{ name: "Entrantes", items: [] }, { name: "Carnes", items: [] }, { name: "Pescados", items: [] }];
         await database.collection('carta').insertMany(cartaCategories);
 
         const cartaItemsEntrantes = [{name: "carne con patatas" , price: 11.99, photo: "1.png"},
@@ -182,14 +182,14 @@ export function buildServer({
         {name: "dorada en salsa" , price: 12.99, photo: "1.png"},
         {name: "lubina al horno" , price: 15.99, photo: "1.png"}];
 
-        await database.collection('carta').updateOne({ nombre : "Entrantes" }, { $addToSet: { items: { $each: cartaItemsEntrantes } } });
-        await database.collection('carta').updateOne({ nombre : "Carnes" }, { $addToSet: { items: { $each: cartaItemsCarnes } } });
-        await database.collection('carta').updateOne({ nombre : "Pescados" }, { $addToSet: { items: { $each: cartaItemsPescados } } });
+        await database.collection('carta').updateOne({ name : "Entrantes" }, { $addToSet: { items: { $each: cartaItemsEntrantes } } });
+        await database.collection('carta').updateOne({ name : "Carnes" }, { $addToSet: { items: { $each: cartaItemsCarnes } } });
+        await database.collection('carta').updateOne({ name : "Pescados" }, { $addToSet: { items: { $each: cartaItemsPescados } } });
 
         res
             .status(200)
             .headers({ 'content-type': 'application/json' })
-            .send(table);
+            .send(cartaCategories);
     })
 
     
@@ -260,7 +260,7 @@ export function buildServer({
     server.get('/cartaCategories', async (req, res) => {
         const carta = await database
             .collection('carta')
-            .distinct("nombre");
+            .distinct("name");
         
         res
             .status(200)
@@ -270,7 +270,7 @@ export function buildServer({
     server.get('/carta/:category', async (req: FastifyRequest<{ Params: { category: string } }>, res) => {
         const carta = await database
             .collection('carta')
-            .find({ nombre: req.params.category })
+            .find({ name: req.params.category })
             .toArray();
         
         res
@@ -283,7 +283,7 @@ export function buildServer({
         const itemInsert = req.body;
         console.log(itemInsert);
         // Seleccionamos la colección, actualizamos la categoría por nombre y hacemos push de el/los items a la cat items
-        await database.collection('carta').updateOne({ nombre : itemInsert.nombre }, { $push: { items: itemInsert.items } });
+        await database.collection('carta').updateOne({ name : itemInsert.name }, { $push: { items: itemInsert.items } });
 
         res
             .status(200)
@@ -293,7 +293,7 @@ export function buildServer({
     server.post<{ Body: Categoria}>('/carta/newCategory', async (req, res) => {
         const catInsert = req.body;
 
-        await database.collection('carta').insertOne({ nombre : catInsert.nombre, items: [] })
+        await database.collection('carta').insertOne({ name : catInsert.name, items: [] })
 
         res
             .status(200)
