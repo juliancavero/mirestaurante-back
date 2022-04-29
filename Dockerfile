@@ -1,17 +1,20 @@
-FROM node:16-alpine
-
-ENV PORT 3099
+FROM node:16-alpine as builder
 
 WORKDIR /usr/app
 
+COPY . .
+
+RUN npm ci && npm build
+
+FROM node:16-alpine
+
+WORKDIR /usr/app
 COPY package*.json ./
 
-RUN npm ci && ls
+RUN npm ci --production
+COPY --from=builder /usr/app/dist /user/app/dist
 
-RUN npm run build
+ENV HTTP_PORT 4040
+EXPOSE ${HTTP_PORT}
 
-RUN ls
-
-EXPOSE 3099
-
-CMD [ "npm", "start" ]
+CMD ["npm", "start"]
