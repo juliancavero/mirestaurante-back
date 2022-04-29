@@ -13,7 +13,7 @@ services:
      mirestaurante:
           networks:
                - mired
-          image: juliancavero/mirestaurante-back
+          build: .
           environment:
                - MONGO_DATABASE_NAME=teamcamp
                - MONGO_HOST=mongodb
