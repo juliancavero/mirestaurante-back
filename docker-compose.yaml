@@ -22,7 +22,7 @@ services:
           depends_on:
                - mongodb
           volumes:
-               - ${PWD}/mirestaurante/statics:/public/images
+               - ${PWD}/mirestaurante/statics:/app/public/images
           restart: always
 volumes:
      mongodata:
