@@ -2,7 +2,7 @@ version: "3"
 services:
      mongodb:
           networks:
-               - mired
+               - mirestaurantered
           image: mongo:5.0.8
           container_name: "mongodb"
           environment:
@@ -12,7 +12,7 @@ services:
           command: mongod
      mirestaurante:
           networks:
-               - mired
+               - mirestaurantered
           build: .
           environment:
                - MONGO_DATABASE_NAME=teamcamp
@@ -27,4 +27,4 @@ services:
 volumes:
      mongodata:
 networks:
-     mired: 
+     mirestaurantered: 
