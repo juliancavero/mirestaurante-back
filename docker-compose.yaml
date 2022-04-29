@@ -3,7 +3,7 @@ services:
      mongodb:
           networks:
                - mired
-          image: mongo:latest
+          image: mongo:5.0.8
           container_name: "mongodb"
           environment:
                - DATABASE_NAME=teamcamp

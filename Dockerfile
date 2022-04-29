@@ -18,7 +18,7 @@ RUN npm ci --production
 
 COPY --from=builder /usr/app/dist /user/app/dist
 
-ENV HTTP_PORT 4040
+ENV HTTP_PORT 3099
 EXPOSE ${HTTP_PORT}
 
 CMD ["npm", "start"]
