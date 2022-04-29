@@ -22,12 +22,9 @@ services:
           depends_on:
                - mongodb
           volumes:
-               - type: volume
-                 source: imagenes
-                 target: ${PWD}/mirestaurante/statics:/public/images
+               - ${PWD}/mirestaurante/statics:/public/images
           restart: always
 volumes:
      mongodata:
-     imagenes: 
 networks:
      mired: 
