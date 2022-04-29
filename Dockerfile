@@ -16,7 +16,7 @@ COPY package*.json ./
 
 RUN npm ci --production
 
-COPY --from=builder /usr/app/dist /user/app/dist
+COPY --from=builder /usr/app/dist /usr/app/dist
 
 ENV HTTP_PORT 3099
 EXPOSE ${HTTP_PORT}

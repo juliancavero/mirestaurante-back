@@ -9,8 +9,6 @@ services:
                - DATABASE_NAME=teamcamp
           volumes:
                - mongodata:/data/db
-          ports:
-               - "27017:27017"
           command: mongod
      mirestaurante:
           networks:
