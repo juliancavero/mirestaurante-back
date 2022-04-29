@@ -20,7 +20,7 @@ services:
                - MONGO_DATABASE_NAME=teamcamp
                - MONGO_HOST=mongodb
           ports:
-               - "3099:3099"
+               - "4040:3099"
           depends_on:
                - mongodb
           restart: always
