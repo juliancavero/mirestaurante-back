@@ -10,6 +10,7 @@ services:
           volumes:
                - mongodata:/data/db
           command: mongod
+          restart: always
      mirestaurante:
           networks:
                - mirestaurantered
@@ -24,7 +25,7 @@ services:
           volumes:
                - ${PWD}/../statics:/app/public/images
           restart: always
-          
+
 volumes:
      mongodata:
 networks:
