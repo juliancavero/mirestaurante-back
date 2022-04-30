@@ -33,6 +33,9 @@ export type Categoria = {
     name: string;
     items: Item[];
 }
+export type NewCategory = {
+    name: string;
+}
 export type ItemInsert = {
     name: string;
     items: ItemSendType;
@@ -106,13 +109,12 @@ export function buildServer({
     }) */
 
     server.post('/cartaItemPhoto', { preHandler: upload.single('cartaItemPhoto')}, function (req, res){
-        console.log(req.body);
         res
             .code(200)
             .headers({
                 'Content-Type': 'image/*'
             })
-            .send('BIEN')
+            .send(res.code);
     })
 
    
@@ -290,7 +292,7 @@ export function buildServer({
             .send(itemInsert);
     })
 
-    server.post<{ Body: Categoria}>('/carta/newCategory', async (req, res) => {
+    server.post<{ Body: NewCategory}>('/carta/newCategory', async (req, res) => {
         const catInsert = req.body;
 
         await database.collection('carta').insertOne({ name : catInsert.name, items: [] })
