@@ -27,6 +27,10 @@ type Table = {
     name?: string;
 }
 
+type NewTableType = {
+    size: number;
+}
+
 export type CartaType = Categoria[];
 
 export type Categoria = {
@@ -102,11 +106,6 @@ export function buildServer({
     // IMAGENES
     
     server.register(multer.contentParser);
-
-    /* server.register(fastifyStatic, {
-        root: path.join(__dirname, 'public/images'),
-        prefix: '/public/images/',
-    }) */
 
     server.post('/cartaItemPhoto', { preHandler: upload.single('cartaItemPhoto')}, function (req, res){
         res
@@ -194,8 +193,6 @@ export function buildServer({
             .send(cartaCategories);
     })
 
-    
-
     server.get('/reservations', async (req, res) => {
         const allReservations = await database
             .collection('reservations')
@@ -218,15 +215,21 @@ export function buildServer({
             .send(allReservations);
     })
 
-    server.post<{ Body: Table }>('/reservations/new', async (req, res) => {
-        const table = req.body;
-
-        await database.collection('reservations').insertOne(table);
+    server.post<{ Body: NewTableType }>('/reservations/new', async (req, res) => {
+        const tableInfo = req.body;
+        
+        const newId = await database.collection('reservations').countDocuments() + 1;
+        const bod = {
+            id: newId,
+            status: 'Available',
+            size: tableInfo.size
+        }
+        await database.collection('reservations').insertOne(bod);
 
         res
             .status(200)
             .headers({ 'content-type': 'application/json' })
-            .send(table);
+            .send(bod);
     })
 
     server.put<{ Body: Table }>('/reservations/update', async (req, res) => {
