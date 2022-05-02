@@ -385,28 +385,12 @@ export function buildServer({
             if(selectedOrder){
                 if('totalCost' in selectedOrder){
                     const todaysDate = new Date().toISOString().slice(0, 10);
-                    const { totalCost } = selectedOrder;
                     const orderWithDate = {
                         ...selectedOrder,
                         date: todaysDate
                     }
                     await database.collection('orderHistory').insertOne(orderWithDate);
 
-                    const dailyData = await database.collection('dailyData').findOne({ date: todaysDate });
-                    var newDailyIncome = 0;
-                    if(dailyData !== null) {
-                        newDailyIncome = dailyData.totalDailyIncome + totalCost;
-                    }
-                    
-
-                    await database.collection('dailyData').updateOne(
-                        { date: todaysDate },
-                        {
-                            $push: { separateIncome: totalCost },
-                            $set: { totalDailyIncome: newDailyIncome }
-                        },
-                        { upsert: true }
-                    );
 
                     await database.collection('orders').findOneAndDelete({ _id: orderPaid });
 
