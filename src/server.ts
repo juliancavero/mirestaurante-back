@@ -384,10 +384,15 @@ export function buildServer({
             const selectedOrder = await database.collection('orders').findOne({ _id: orderPaid });
             if(selectedOrder){
                 if('totalCost' in selectedOrder){
-                    const { totalCost } = selectedOrder;
-                    await database.collection('orderHistory').insertOne(selectedOrder);
-
                     const todaysDate = new Date().toISOString().slice(0, 10);
+                    const { totalCost } = selectedOrder;
+                    const orderWithDate = {
+                        ...selectedOrder,
+                        date: todaysDate
+                    }
+                    await database.collection('orderHistory').insertOne(orderWithDate);
+
+                    
                     await database.collection('dailyData').updateOne(
                         { date: todaysDate },
                         {
@@ -412,7 +417,7 @@ export function buildServer({
 
     server.get('/dailyData', async (req, res) => {
 
-        const dailyData = await database.collection('dailyData').find({}).toArray();
+        const dailyData = await database.collection('orderHistory').find({}).toArray();
 
         res
             .status(200)
