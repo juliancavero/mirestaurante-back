@@ -377,19 +377,46 @@ export function buildServer({
         }
     })
 
-    server.delete<{ Body: { id: string }}>('/orders/delete', async (req, res) => {
-        const orderDelete = new ObjectId(req.body.id);
+    server.delete<{ Body: { id: ObjectId }}>('/orders/delete', async (req, res) => {
+        const orderPaid = req.body.id;
 
-        if(await database.collection('orders').countDocuments({ _id: orderDelete }, { limit: 1})){
-            await database.collection('orders').findOneAndDelete({ _id: orderDelete });
-            res
-                .status(200)
-                .send(orderDelete)
+        if(await database.collection('orders').countDocuments({ _id: orderPaid }, { limit: 1})){
+            const selectedOrder = await database.collection('orders').findOne({ _id: orderPaid });
+            if(selectedOrder){
+                if('totalCost' in selectedOrder){
+                    const { totalCost } = selectedOrder;
+                    await database.collection('orderHistory').insertOne(selectedOrder);
+
+                    const todaysDate = new Date().toISOString().slice(0, 10);
+                    await database.collection('dailyData').updateOne(
+                        { date: todaysDate },
+                        {
+                            $setOnInsert: { dailyIncome: { $push: {totalCost}}}
+                        },
+                        { upsert: true }
+                    );
+
+                    await database.collection('orders').findOneAndDelete({ _id: orderPaid });
+
+                    res
+                        .status(200)
+                        .send(orderPaid)
+                }
+            }
         } else {
             res
                 .status(200)
-                .send(`Order ${orderDelete} not found.`)
+                .send(`Order ${orderPaid} not found.`)
         }
+    })
+
+    server.get('/dailyData', async (req, res) => {
+
+        const dailyData = await database.collection('orders').find({}).toArray();
+
+        res
+            .status(200)
+            .send(dailyData);
     })
 
 
