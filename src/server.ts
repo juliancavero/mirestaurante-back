@@ -397,7 +397,7 @@ export function buildServer({
                         { date: todaysDate },
                         {
                             $push: { separateIncome: totalCost },
-                            totalDailyIncome: { $sum : '$separateIncome' }
+                            $set: { totalDailyIncome: { $sum : '$separateIncome' } }
                         },
                         { upsert: true }
                     );
