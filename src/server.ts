@@ -377,11 +377,11 @@ export function buildServer({
         }
     })
 
-    server.delete<{ Body: { id: string }}>('/orders/delete', async (req, res) => {
-        const orderPaid = new ObjectId(req.body.id);
+    server.delete<{ Body: { tableId: number }}>('/orders/delete', async (req, res) => {
+        const orderTable = req.body.tableId;
 
-        if(await database.collection('orders').countDocuments({ _id: orderPaid }, { limit: 1})){
-            const selectedOrder = await database.collection('orders').findOne({ _id: orderPaid });
+        if(await database.collection('orders').countDocuments({ tableId: orderTable }, { limit: 1})){
+            const selectedOrder = await database.collection('orders').findOne({ tableId: orderTable });
             if(selectedOrder){
                 if('totalCost' in selectedOrder){
                     const todaysDate = new Date().toISOString().slice(0, 10);
@@ -391,19 +391,19 @@ export function buildServer({
                     }
                     await database.collection('orderHistory').insertOne(orderWithDate);
 
-                    await database.collection('orders').findOneAndDelete({ _id: orderPaid });
+                    await database.collection('orders').findOneAndDelete({ tableId: orderTable });
 
                     await database.collection('reservations').updateOne({ id: selectedOrder.tableId }, { $set: { status: 'Available' }, $unset: { name: "" } });
 
                     res
                         .status(200)
-                        .send(orderPaid)
+                        .send(orderTable)
                 }
             }
         } else {
             res
                 .status(200)
-                .send(`Order ${orderPaid} not found.`)
+                .send(`Order ${orderTable} not found.`)
         }
     })
 
