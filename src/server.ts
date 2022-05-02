@@ -396,7 +396,8 @@ export function buildServer({
                     await database.collection('dailyData').updateOne(
                         { date: todaysDate },
                         {
-                            $setOnInsert: { dailyIncome: { $push: {totalCost}}}
+                            separateIncome: { $push: {totalCost}},
+                            totalDailyIncome: { $sum : '$separateIncome' }
                         },
                         { upsert: true }
                     );
@@ -415,9 +416,18 @@ export function buildServer({
         }
     })
 
+    server.get('/orderHistory', async (req, res) => {
+
+        const orderHistory = await database.collection('orderHistory').find({}).toArray();
+
+        res
+            .status(200)
+            .send(orderHistory);
+    })
+
     server.get('/dailyData', async (req, res) => {
 
-        const dailyData = await database.collection('orderHistory').find({}).toArray();
+        const dailyData = await database.collection('dailyData').find({}).toArray();
 
         res
             .status(200)
