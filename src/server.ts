@@ -396,7 +396,7 @@ export function buildServer({
                     await database.collection('dailyData').updateOne(
                         { date: todaysDate },
                         {
-                            separateIncome: { $push: {totalCost}},
+                            $push: { separateIncome: totalCost },
                             totalDailyIncome: { $sum : '$separateIncome' }
                         },
                         { upsert: true }
