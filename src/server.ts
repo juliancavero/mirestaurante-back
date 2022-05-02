@@ -392,12 +392,18 @@ export function buildServer({
                     }
                     await database.collection('orderHistory').insertOne(orderWithDate);
 
+                    const dailyData = await database.collection('dailyData').findOne({ date: todaysDate });
+                    var newDailyIncome = 0;
+                    if(dailyData !== null) {
+                        newDailyIncome = dailyData.totalDailyIncome + totalCost;
+                    }
                     
+
                     await database.collection('dailyData').updateOne(
                         { date: todaysDate },
                         {
                             $push: { separateIncome: totalCost },
-                            $set: { totalDailyIncome: { $sum : '$separateIncome' } }
+                            $set: { totalDailyIncome: newDailyIncome }
                         },
                         { upsert: true }
                     );
