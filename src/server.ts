@@ -377,8 +377,8 @@ export function buildServer({
         }
     })
 
-    server.delete<{ Body: { id: ObjectId }}>('/orders/delete', async (req, res) => {
-        const orderPaid = req.body.id;
+    server.delete<{ Body: { id: string }}>('/orders/delete', async (req, res) => {
+        const orderPaid = new ObjectId(req.body.id);
 
         if(await database.collection('orders').countDocuments({ _id: orderPaid }, { limit: 1})){
             const selectedOrder = await database.collection('orders').findOne({ _id: orderPaid });
