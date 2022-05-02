@@ -412,7 +412,7 @@ export function buildServer({
 
     server.get('/dailyData', async (req, res) => {
 
-        const dailyData = await database.collection('orders').find({}).toArray();
+        const dailyData = await database.collection('dailyData').find({}).toArray();
 
         res
             .status(200)
