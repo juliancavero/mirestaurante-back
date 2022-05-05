@@ -316,14 +316,27 @@ export function buildServer({
             .send(itemModify);
     })
 
-    server.delete<{ Body: { id: number}}>('/carta/delete', async (req, res) => {
-        const itemDelete = req.body.id;
+    server.delete<{ Body: { name: string }}>('/carta/deleteItem', async (req, res) => {
+        const itemDelete = req.body.name;
 
-        if((await database.collection('carta').find({ "items.id": itemDelete }).toArray()).length > 0){
-            await database.collection('carta').updateOne({ "items.id": itemDelete }, { $pull: { items: { id: itemDelete}}});
+        if((await database.collection('carta').find({ "items.name": itemDelete }).toArray()).length > 0){
+            await database.collection('carta').updateOne({ "items.name": itemDelete }, { $pull: { items: { name: itemDelete}}});
             res
                 .status(200)
                 .send(itemDelete);
+        } else {
+            res.status(200).send("Item not found");
+        }
+    })
+
+    server.delete<{ Body: { name: string }}>('/carta/deleteCategory', async (req, res) => {
+        const categoryDelete = req.body.name;
+
+        if((await database.collection('carta').find({ "name": categoryDelete }).toArray()).length > 0){
+            await database.collection('carta').findOneAndDelete({ "items.name": categoryDelete });
+            res
+                .status(200)
+                .send(categoryDelete);
         } else {
             res.status(200).send("Item not found");
         }
