@@ -325,7 +325,7 @@ export function buildServer({
                 .status(200)
                 .send(itemDelete);
         } else {
-            res.status(200).send("Item not found");
+            res.status(400).send("Item not found");
         }
     })
 
@@ -333,12 +333,12 @@ export function buildServer({
         const categoryDelete = req.body.name;
 
         if((await database.collection('carta').find({ "name": categoryDelete }).toArray()).length > 0){
-            await database.collection('carta').findOneAndDelete({ "items.name": categoryDelete });
+            await database.collection('carta').findOneAndDelete({ "name": categoryDelete });
             res
                 .status(200)
                 .send(categoryDelete);
         } else {
-            res.status(200).send("Item not found");
+            res.status(400).send("Category not found");
         }
     })
 
