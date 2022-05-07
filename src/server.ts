@@ -367,7 +367,7 @@ export function buildServer({
     server.post<{ Body: OrderRequest }>('/orders/new', async (req, res) => {
         const order = req.body;
         let totalCost = 0;
-        order.items.map(item => totalCost += item.price);
+        order.items.map(item => totalCost += (item.price * item.quantity));
         const defOrder = {...order, totalCost: totalCost.toFixed(2)}
 
         await database.collection('orders').insertOne(defOrder);
