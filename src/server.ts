@@ -56,6 +56,7 @@ export type ItemSendType = {
     name: string;
     price: number;
     photo: string;
+    quantity: number;
 }
 
 type Order = {
@@ -328,7 +329,7 @@ export function buildServer({
             res.status(400).send("Item not found");
         }
     })
-    
+
 
     server.delete<{ Body: { name: string }}>('/carta/deleteCategory', async (req, res) => {
         const categoryDelete = req.body.name;
