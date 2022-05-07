@@ -353,6 +353,7 @@ export function buildServer({
             .status(200)
             .send(allOrders);
     })
+    
 
     server.get('/orders/:orderid', async (req: FastifyRequest<{ Params: { orderid: string } }>, res) => {
         const selectedOrder = new ObjectId(req.params.orderid);
