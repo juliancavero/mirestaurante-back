@@ -249,6 +249,11 @@ export function buildServer({
         }
     })
 
+    server.get('/', (req, res) => {
+        res
+            .status(200)
+            .send('Backend Working correctly');
+    })
 
     //////////////////
 
