@@ -4,7 +4,7 @@ services:
           networks:
                - mirestaurantered
           image: mongo:5.0.8
-          container_name: "mongodb"
+          container_name: "mongodb_mirestaurante"
           environment:
                - DATABASE_NAME=teamcamp
           volumes:
