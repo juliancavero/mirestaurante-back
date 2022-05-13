@@ -23,6 +23,7 @@ export function buildMongoDatabase({ host, port, database }: MongoConfig) {
         return db;
     }
 
+    
     async function close() {
         await client.close();
     }
