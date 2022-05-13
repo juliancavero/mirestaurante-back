@@ -412,6 +412,8 @@ export function buildServer({
                     }
                     await database.collection('orderHistory').insertOne(orderWithDate);
 
+                    await database.collection('dailyData').updateOne({date: todaysDate}, { $push: { totalIncome: selectedOrder.totalCost } }, { upsert: true});
+
                     await database.collection('orders').findOneAndDelete({ tableId: orderTable });
 
                     await database.collection('reservations').updateOne({ id: selectedOrder.tableId }, { $set: { status: 'Available' }, $unset: { name: "" } });
