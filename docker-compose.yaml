@@ -25,7 +25,6 @@ services:
           volumes:
                - ${PWD}/../statics:/app/public/images
           restart: always
-
 volumes:
      mongodata:
 networks:
