@@ -1,10 +1,10 @@
 version: "3"
 services:
-     mongolo:
+     mongodb:
           networks:
                - mirestaurantered
           image: mongo:5.0.8
-          container_name: "mongolo"
+          container_name: "mongodb"
           environment:
                - DATABASE_NAME=teamcamp
           volumes:
@@ -17,11 +17,11 @@ services:
           image: juliancavero/mirestaurante-back
           environment:
                - MONGO_DATABASE_NAME=teamcamp
-               - MONGO_HOST=mongolo
+               - MONGO_HOST=mongodb
           ports:
                - "4040:3099"
           depends_on:
-               - mongolo
+               - mongodb
           volumes:
                - ${PWD}/../statics:/app/public/images
           restart: always
