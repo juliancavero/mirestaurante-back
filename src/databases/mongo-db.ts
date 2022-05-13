@@ -9,7 +9,7 @@ export function buildMongoDatabase({ host, port, database }: MongoConfig) {
     let client: MongoClient;
     let db: Db;
     async function init() {
-        const url = `mongodb://${host}:${port}`;
+        const url = `mongolo://${host}:${port}`;
         client = new MongoClient(url);
         await client.connect();
         db = client.db(database);
