@@ -8,7 +8,7 @@ services:
           environment:
                - DATABASE_NAME=teamcamp
           volumes:
-               - mongodata:/data/db
+               - mongodata_mirestaurante:/data/db
           command: mongod
           restart: always
      mirestaurante:
@@ -26,7 +26,7 @@ services:
                - ${PWD}/../statics:/app/public/images
           restart: always
 volumes:
-     mongodata:
+     mongodata_mirestaurante:
      
 networks:
      mirestaurantered: 
