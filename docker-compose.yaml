@@ -1,32 +1,31 @@
 version: "3"
 services:
-     mongodb:
-          networks:
-               - mirestaurantered
-          image: mongo:5.0.8
-          container_name: "mongodb_mirestaurante"
-          environment:
-               - DATABASE_NAME=teamcamp
-          volumes:
-               - mongodata_mirestaurante:/data/db
-          command: mongod
-          restart: always
-     mirestaurante:
-          networks:
-               - mirestaurantered
-          image: juliancavero/mirestaurante-back
-          environment:
-               - MONGO_DATABASE_NAME=teamcamp
-               - MONGO_HOST=mongodb
-          ports:
-               - "4040:3099"
-          depends_on:
-               - mongodb
-          volumes:
-               - ${PWD}/../statics:/app/public/images
-          restart: always
+  mongodb:
+    networks:
+      - mirestaurantered
+    image: mongo:5.0.8
+    container_name: "mongodb_mirestaurante"
+    environment:
+      - DATABASE_NAME=teamcamp
+    volumes:
+      - mongodata_mirestaurante:/data/db
+    command: mongod
+    restart: always
+  mirestaurante:
+    networks:
+      - mirestaurantered
+    image: juliancavero/mirestaurante-back
+    environment:
+      - MONGO_DATABASE_NAME=teamcamp
+      - MONGO_HOST=mongodb
+    ports:
+      - "4040:3099"
+    depends_on:
+      - mongodb
+    volumes:
+      - ${PWD}/../statics:/app/public/images
+    restart: always
 volumes:
-     mongodata_mirestaurante:
-     
+  mongodata_mirestaurante:
 networks:
-     mirestaurantered: 
+  mirestaurantered:

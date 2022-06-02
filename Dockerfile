@@ -6,8 +6,6 @@ COPY . .
 
 RUN npm ci && npm run build
 
-
-
 FROM node:16-alpine
 
 WORKDIR /app
