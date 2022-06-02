@@ -15,6 +15,7 @@ services:
     networks:
       - mirestaurantered
     image: juliancavero/mirestaurante-back
+    container_name: "fastify_mirestaurante"
     environment:
       - MONGO_DATABASE_NAME=teamcamp
       - MONGO_HOST=mongodb
