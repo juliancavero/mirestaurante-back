@@ -82,7 +82,7 @@ type DailyIncomeData = {
 };
 
 type PutNewPassword = {
-  password: string;
+  key: string;
 };
 
 type Employee = {
@@ -104,6 +104,10 @@ type RegisterUser = {
   password: string;
   dni: string;
   secretKey: string;
+};
+
+type DeleteTableType = {
+  id: number;
 };
 
 export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
@@ -169,6 +173,18 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
 
     res.status(200).send(allReservations);
   });
+
+  server.delete<{ Body: DeleteTableType }>(
+    "/reservations",
+    async (req, res) => {
+      const idTableDelete = req.body.id;
+      await database
+        .collection("reservations")
+        .findOneAndDelete({ id: idTableDelete });
+
+      res.status(200).send({ idTableDelete });
+    }
+  );
 
   server.get("/takenReservations", async (req, res) => {
     const allReservations = await database
@@ -454,7 +470,7 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
       .find({})
       .toArray();
 
-    res.status(200).send(orderHistory);
+    res.status(200).send({ orderHistory });
   });
 
   server.get("/dailyData", async (req, res) => {
@@ -470,38 +486,7 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
       each.totalIncome = [total];
     });
 
-    /* const example = {
-      dailyData: [
-        {
-          date: "2022-05-21",
-          totalIncome: [150],
-        },
-        {
-          date: "2022-05-22",
-          totalIncome: [300],
-        },
-        {
-          date: "2022-05-23",
-          totalIncome: [425.5],
-        },
-        {
-          date: "2022-05-24",
-          totalIncome: [999.5],
-        },
-        {
-          date: "2022-05-25",
-          totalIncome: [77.5],
-        },
-      ],
-    }; */
-
-    res.status(200).send({ dailyData }); // SHOULD RETURN {DAILYDATA}
-  });
-
-  server.get("/deletedailydata", async (req, res) => {
-    await database.collection("dailyData").deleteMany({});
-
-    res.status(204);
+    res.status(200).send({ dailyData });
   });
 
   server.put<{ Body: PutNewPassword }>("/newEmployeeKey", async (req, res) => {
@@ -509,17 +494,19 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
     await database
       .collection("secretKey")
       .findOneAndReplace(
-        { password: { $exists: true } },
-        { password: newKey },
+        { key: { $exists: true } },
+        { key: newKey },
         { upsert: true }
       );
-    res.status(204);
+    res.status(200).send({ newKey });
   });
 
   server.get("/newEmployeeKey", async (req, res) => {
-    const key = await database.collection("secretKey").findOne({});
-    if (key && "password" in key) {
-      res.status(200).send(key);
+    const actualKey = await database.collection("secretKey").findOne({});
+    console.log(actualKey);
+    if (actualKey && "key" in actualKey) {
+      const key = actualKey.key;
+      res.status(200).send({ key });
     } else {
       res.status(200).send({ key: "not_found" });
     }
@@ -576,10 +563,12 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
   });
   server.post<{ Body: User }>("/login", async (req, res) => {
     const { userName, password } = req.body;
+
     const user = await database
       .collection("users")
       .findOne({ userName: userName, password: password });
     if (!user) return res.status(404).send({ userName });
+
     const employeeData = await database
       .collection("employees")
       .findOne({ userName: userName }, { projection: { role: 1 } });
@@ -599,10 +588,10 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
     const confirmationKey = (await database
       .collection("secretKey")
       .findOne({}, { projection: { _id: 0 } })) as unknown as {
-      password: string;
+      key: string;
     };
-    if (secretKey !== confirmationKey.password) {
-      console.log(secretKey, confirmationKey.password);
+    if (secretKey !== confirmationKey.key) {
+      console.log(secretKey, confirmationKey.key);
       return res.status(403).send({ secretKey });
     }
     const existingUser = await database
@@ -667,13 +656,276 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
         dni: "34567890C",
       },
     ];
+    const testDailyData = [
+      {
+        date: "2022-06-04",
+        totalIncome: [108],
+      },
+      {
+        date: "2022-06-05",
+        totalIncome: [35.4],
+      },
+      {
+        date: "2022-06-06",
+        totalIncome: [73],
+      },
+      {
+        date: "2022-06-07",
+        totalIncome: [314.3],
+      },
+    ];
+    const testCartaItems = [
+      {
+        name: "Entrantes",
+        items: [
+          { name: "Patatas fritas", price: 6.5, photo: "patatasfritas.jpg" },
+          { name: "Patatas bravas", price: 7, photo: "patatasbravas.jpg" },
+          { name: "Marinera", price: 1.5, photo: "marinera.jpg" },
+          { name: "Ensalada césar", price: 9, photo: "ensaladacesar.jpg" },
+        ],
+      },
+      {
+        name: "Carnes",
+        items: [
+          { name: "Carne de pollo", price: 11, photo: "carnedepollo.jpg" },
+          { name: "Carne de ternera", price: 15, photo: "ternera.jpg" },
+          { name: "Cerdo a la plancha", price: 13.2, photo: "cerdo.jpg" },
+          { name: "Solomillo", price: 19.9, photo: "solomillo.jpg" },
+        ],
+      },
+      {
+        name: "Pescados",
+        items: [
+          { name: "Lubina a la plancha", price: 10, photo: "lubina.jpg" },
+          { name: "Dorada a la sal", price: 12, photo: "dorada.jpg" },
+          { name: "Emperador", price: 17, photo: "emperador.jpg" },
+          { name: "Sardinas rebozadas", price: 9, photo: "sardinas.jpg" },
+        ],
+      },
+      {
+        name: "Postres",
+        items: [
+          { name: "Tarta de la abuela", price: 5, photo: "tartaabuela.jpg" },
+          { name: "Coulant de chocolate", price: 4, photo: "coulant.jpg" },
+          { name: "Tarta de oreo", price: 7.5, photo: "oreo.jpg" },
+          { name: "Helado de cookies", price: 6.33, photo: "helado.jpg" },
+        ],
+      },
+    ];
+    const testTables = [
+      {
+        id: 1,
+        status: "Available",
+        size: 4,
+      },
+      {
+        id: 2,
+        status: "Available",
+        size: 4,
+      },
+      {
+        id: 3,
+        status: "Available",
+        size: 2,
+      },
+      {
+        id: 4,
+        status: "Available",
+        size: 2,
+      },
+      {
+        id: 5,
+        status: "Available",
+        size: 6,
+      },
+      {
+        id: 6,
+        status: "Available",
+        size: 6,
+      },
+      {
+        id: 7,
+        status: "Available",
+        size: 5,
+      },
+      {
+        id: 8,
+        status: "Available",
+        size: 10,
+      },
+      {
+        id: 9,
+        status: "Available",
+        size: 10,
+      },
+      {
+        id: 10,
+        status: "Available",
+        size: 8,
+      },
+      {
+        id: 11,
+        status: "Available",
+        size: 8,
+      },
+      {
+        id: 12,
+        status: "Available",
+        size: 4,
+      },
+      {
+        id: 13,
+        status: "Available",
+        size: 2,
+      },
+      {
+        id: 14,
+        status: "Available",
+        size: 2,
+      },
+    ];
+    const testOrderHistory = [
+      {
+        name: "Marta Montesinos",
+        tableId: 3,
+        items: [
+          {
+            name: "Patatas bravas",
+            price: 7,
+            photo: "patatasbravas.jpg",
+            quantity: 1,
+          },
+          {
+            name: "Ensalada césar",
+            price: 9,
+            photo: "ensaladacesar.jpg",
+            quantity: 1,
+          },
+          {
+            name: "Carne de ternera",
+            price: 15,
+            photo: "ternera.jpg",
+            quantity: 4,
+          },
+          {
+            name: "Dorada a la sal",
+            price: 12,
+            photo: "dorada.jpg",
+            quantity: 1,
+          },
+          {
+            name: "Coulant de chocolate",
+            price: 4,
+            photo: "coulant.jpg",
+            quantity: 5,
+          },
+        ],
+        totalCost: 108,
+        date: "2022-06-04",
+      },
+      {
+        name: "Luis Cavero",
+        tableId: 8,
+        items: [
+          {
+            name: "Patatas fritas",
+            price: 6.5,
+            photo: "patatasfritas.jpg",
+            quantity: 1,
+          },
+          {
+            name: "Solomillo",
+            price: 19.9,
+            photo: "solomillo.jpg",
+            quantity: 1,
+          },
+          {
+            name: "Sardinas rebozadas",
+            price: 9,
+            photo: "sardinas.jpg",
+            quantity: 1,
+          },
+        ],
+        totalCost: 35.4,
+        date: "2022-06-05",
+      },
+      {
+        name: "José Pelaez",
+        tableId: 10,
+        items: [
+          {
+            name: "Ensalada césar",
+            price: 9,
+            photo: "ensaladacesar.jpg",
+            quantity: 4.5,
+          },
+          {
+            name: "Carne de ternera",
+            price: 15,
+            photo: "ternera.jpg",
+            quantity: 1,
+          },
+          {
+            name: "Lubina a la plancha",
+            price: 10,
+            photo: "lubina.jpg",
+            quantity: 1,
+          },
+          {
+            name: "Tarta de oreo",
+            price: 7.5,
+            photo: "oreo.jpg",
+            quantity: 1,
+          },
+        ],
+        totalCost: 73,
+        date: "2022-06-06",
+      },
+      {
+        name: "Marcos Salazar",
+        tableId: 5,
+        items: [
+          {
+            name: "Marinera",
+            price: 1.5,
+            photo: "marinera.jpg",
+            quantity: 6,
+          },
+          {
+            name: "Carne de ternera",
+            price: 15,
+            photo: "ternera.jpg",
+            quantity: 6.5,
+          },
+          {
+            name: "Emperador",
+            price: 17,
+            photo: "emperador.jpg",
+            quantity: 8.5,
+          },
+          {
+            name: "Helado de cookies",
+            price: 6.33,
+            photo: "helado.jpg",
+            quantity: 10,
+          },
+        ],
+        totalCost: 314.3,
+        date: "2022-06-07",
+      },
+    ];
+
+    await database.collection("orderHistory").insertMany(testOrderHistory);
+    await database.collection("reservations").insertMany(testTables);
+    await database.collection("carta").insertMany(testCartaItems);
+    await database.collection("dailyData").insertMany(testDailyData);
     await database.collection("employees").insertMany(testEmployees);
     await database.collection("users").insertMany(testUsers);
     await database
       .collection("secretKey")
       .findOneAndReplace(
-        { password: { $exists: true } },
-        { password: "password" },
+        { key: { $exists: true } },
+        { key: "password" },
         { upsert: true }
       );
     res.status(204).send();
