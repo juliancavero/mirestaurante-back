@@ -324,7 +324,7 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
             { "items.name": itemDelete },
             { $pull: { items: { name: itemDelete } } }
           );
-        res.status(200).send(itemDelete);
+        res.status(200).send({ itemDelete });
       } else {
         res.status(400).send("Item not found");
       }
@@ -347,7 +347,7 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
         await database
           .collection("carta")
           .findOneAndDelete({ name: categoryDelete });
-        res.status(200).send(categoryDelete);
+        res.status(200).send({ categoryDelete });
       } else {
         res.status(400).send("Category not found");
       }
@@ -928,7 +928,7 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
         { key: "password" },
         { upsert: true }
       );
-    res.status(204).send();
+    res.status(200).send("Datos de ejemplo guardados en la base de datos.");
   });
 
   return server;
