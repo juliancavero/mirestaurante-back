@@ -110,6 +110,10 @@ type DeleteTableType = {
   id: number;
 };
 
+type DeleteEmployeeType = {
+  userName: string;
+};
+
 export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
   const server = fastify({ logger });
   const database = dbNoSql.getDatabase();
@@ -555,6 +559,27 @@ export function buildServer({ logger, dbNoSql }: ServerDeps): FastifyInstance {
       res.status(405).send({ employeeDni });
     }
   });
+
+  server.delete<{ Body: DeleteEmployeeType }>(
+    "/employees",
+    async (req, res) => {
+      const userNameDelete = req.body.userName;
+      const exists = (
+        await database
+          .collection("employees")
+          .findOneAndDelete({ userName: userNameDelete })
+      ).ok;
+      if (exists === 1) {
+        await database
+          .collection("users")
+          .findOneAndDelete({ userName: userNameDelete });
+
+        res.status(200).send({ userNameDelete });
+      } else {
+        res.status(400).send({ userNameDelete });
+      }
+    }
+  );
 
   server.get("/users", async (req, res) => {
     const users = await database.collection("users").find({}).toArray();
