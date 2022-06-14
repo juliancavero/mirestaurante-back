@@ -2,7 +2,7 @@ version: "3"
 services:
   mongodb_mirestaurante:
     networks:
-      - mirestaurantered
+      - mirestaurantered2
     image: mongo:5.0.8
     container_name: "mongodb_mirestaurante"
     environment:
@@ -13,7 +13,7 @@ services:
     restart: always
   mirestaurante:
     networks:
-      - mirestaurantered
+      - mirestaurantered2
     image: juliancavero/mirestaurante-back
     container_name: "fastify_mirestaurante"
     environment:
@@ -29,4 +29,4 @@ services:
 volumes:
   mongodata_mirestaurante:
 networks:
-  mirestaurantered:
+  mirestaurantered2:
