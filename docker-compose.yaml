@@ -1,8 +1,8 @@
 version: "3"
 services:
-  mongodb_mirestaurante:
+  mongodb:
     networks:
-      - mirestaurantered2
+      - mirestaurantered
     image: mongo:5.0.8
     container_name: "mongodb_mirestaurante"
     environment:
@@ -13,7 +13,7 @@ services:
     restart: always
   mirestaurante:
     networks:
-      - mirestaurantered2
+      - mirestaurantered
     image: juliancavero/mirestaurante-back
     container_name: "fastify_mirestaurante"
     environment:
@@ -22,11 +22,11 @@ services:
     ports:
       - "4040:3099"
     depends_on:
-      - mongodb_mirestaurante
+      - mongodb
     volumes:
       - ${PWD}/../statics:/app/public/images
     restart: always
 volumes:
   mongodata_mirestaurante:
 networks:
-  mirestaurantered2:
+  mirestaurantered:
