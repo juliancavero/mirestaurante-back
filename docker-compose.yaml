@@ -18,7 +18,7 @@ services:
     container_name: "fastify_mirestaurante"
     environment:
       - MONGO_DATABASE_NAME=teamcamp
-      - MONGO_HOST=mongodb
+      - MONGO_HOST=mongodb_mirestaurante
     ports:
       - "4040:3099"
     depends_on:
